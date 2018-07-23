@@ -5,7 +5,9 @@ from keras.preprocessing.image import img_to_array
 from keras.applications import imagenet_utils
 import numpy as np
 import tensorflow as tf
+import os
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 model = ResNet50(include_top=True, weights='imagenet', input_tensor=None, input_shape=None, pooling=None, classes=1000)
 graph = tf.get_default_graph()
