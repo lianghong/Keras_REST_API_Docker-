@@ -31,7 +31,7 @@ COPY models /root/.keras/models
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY circus.conf /etc/circus.conf
 
-EXPOSE 8000/tcp 5555/tcp 8080/tcp
+EXPOSE 8000/tcp 5555/tcp
 
 WORKDIR /deploy/app
 CMD ["nginx", "-g", "daemon off;"]
