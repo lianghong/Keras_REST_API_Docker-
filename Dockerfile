@@ -8,6 +8,7 @@ ENV LANGUAGE=en_US.UTF-8
 RUN yum update -y && yum install -y \
     gcc \
     python36 \
+    python36-pipa \
     python36-devel \
     nginx
 
