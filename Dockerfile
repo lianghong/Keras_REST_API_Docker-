@@ -1,23 +1,19 @@
-FROM amazonlinux:latest
+FROM ubuntu:latest
 MAINTAINER lianghong <feilianghong@gmail.com>
 
-ENV LC_ALL=en_US.UTF-8
-ENV LANG=en_US.UTF-8
-ENV LANGUAGE=en_US.UTF-8
-
-RUN yum update -y && yum install -y \
+RUN apt update && apt upgrade -y \
     gcc \
-    python36 \
-    python36-pipa \
-    python36-devel \
-    nginx
+    python3.6 \
+    python3-pip \
+    python3.6-devel \
+    nginx \
+&& rm -rf /var/lib/apt/lists/*
 
 # copy over our requirements.txt file
 COPY requirements.txt /tmp/
 # upgrade pip and install required python packages
-RUN pip-3.6 install -U pip
-RUN pip3 install -r /tmp/requirements.txt
-RUN touch /etc/sysconfig/network
+RUN pip3 install -U pip
+RUN python3 -m pip install -r /tmp/requirements.txt
 
 # Setup flask application
 RUN mkdir -p /deploy/app
@@ -35,7 +31,7 @@ COPY circus.conf /etc/circus.conf
 EXPOSE 8000/tcp 5555/tcp
 
 WORKDIR /deploy/app
-CMD ["nginx", "-g", "daemon off;"]
-CMD ["/usr/bin/gunicorn", "--config", "/deploy/gunicorn_config.py", "main:app"]
-CMD ["circusd","/etc/circus.conf"]
+CMD ["/usr/sbin/nginx", "-g", "daemon off;"]
+CMD ["/usr/local/bin/gunicorn", "--config", "/deploy/gunicorn_config.py", "main:app"]
+CMD ["/usr/local/bin/circusd","/etc/circus.conf"]
 
