@@ -1,11 +1,11 @@
 FROM ubuntu:latest
 MAINTAINER lianghong <feilianghong@gmail.com>
 
-RUN apt update && apt upgrade -y \
+RUN apt-get update && apt-get upgrade -y \
     gcc \
     python3.6 \
     python3-pip \
-    python3.6-devel \
+    python3.6-dev \
     nginx \
 && rm -rf /var/lib/apt/lists/*
 
@@ -34,4 +34,3 @@ WORKDIR /deploy/app
 CMD ["/usr/sbin/nginx", "-g", "daemon off;"]
 CMD ["/usr/local/bin/gunicorn", "--config", "/deploy/gunicorn_config.py", "main:app"]
 CMD ["/usr/local/bin/circusd","/etc/circus.conf"]
-

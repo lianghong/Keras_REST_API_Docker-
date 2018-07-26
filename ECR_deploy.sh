@@ -20,18 +20,30 @@ Image_Ver="latest"
 
 (
     #Build docker image
-    docker build -t "${Image_Tag}:latest" -f ./Dockerfile .
+    echo "build image of ${Image_Tag}:latest"
+    docker build -t "${Image_Tag}:${Image_Ver}" -f ./Dockerfile .
 
     #Tag the new docker image to the remote repo
-    docker tag "${Image_Tag}:${Image_Ver}" "${ECR_URI}/${Image_Tag}:${Image_Ver}"
+    echo "tag the image"
+    #docker tag "${Image_Tag}:${Image_Ver}" "${ECR_URI}/${Image_Tag}:${Image_Ver}"
+    docker tag "${Image_Tag}:${Image_Ver}" "${ECR_URI}:${Image_Tag}"
+
 )
 
 (
     # Login to AWS ECR
-    $(aws ecr get-login --region "${AWS_Region}")
+    echo "longin ecr"
+    aws_login=$(aws ecr get-login --no-include-email --region "${AWS_Region}")
+    if echo ${aws_login} | grep  -q -E  '^docker login -u AWS -p'
+    then 
+    	echo "longin ecr"
+	$aws_login; 
+    fi
+
 
     # Push to the remote ECR repo (VERSION identifier)
-    docker push "${ECR_URI}/${Image_Tag}:${Image_Ver}"
+    echo "push image to ecr"
+    docker push "${ECR_URI}:${Image_Tag}"
 )
 
 
