@@ -19,6 +19,16 @@ Image_Tag="prediction"
 Image_Ver="latest"
 
 (
+    echo "Check ECR Repo"
+    ecr_repo=$(aws --region ${AWS_Region} ecr describe-repositories --repository-names ${Repo_Name}) 
+    if echo ${ecr_repo} | grep  -q -E "RepositoryNotFoundException"
+    then 
+	echo "Create docker image repo"
+	aws --region ${AWS_Region} ecr create-repository --repository-name ${Repo_Name}
+    fi	
+)
+
+(
     #Build docker image
     echo "build image of ${Image_Tag}:latest"
     docker build -t "${Image_Tag}:${Image_Ver}" -f ./Dockerfile .
@@ -26,7 +36,7 @@ Image_Ver="latest"
     #Tag the new docker image to the remote repo
     echo "tag the image"
     #docker tag "${Image_Tag}:${Image_Ver}" "${ECR_URI}/${Image_Tag}:${Image_Ver}"
-    docker tag "${Image_Tag}:${Image_Ver}" "${ECR_URI}:${Image_Tag}"
+    docker tag "${Image_Tag}:${Image_Ver}" "${ECR_URI}"
 
 )
 
@@ -43,7 +53,7 @@ Image_Ver="latest"
 
     # Push to the remote ECR repo (VERSION identifier)
     echo "push image to ecr"
-    docker push "${ECR_URI}:${Image_Tag}"
+    docker push "${ECR_URI}"
 )
 
 

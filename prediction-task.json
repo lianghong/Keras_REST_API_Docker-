@@ -1,28 +1,21 @@
 {
-  "family": "workshop",
+  "family": "Prediction",
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "512",
   "memory": "1024",
   "networkMode": "awsvpc",
-  "taskRoleArn": "arn:aws:iam::YOUR_ACCOUNT_ID_HERE:role/WorkshopAppRole",
-  "executionRoleArn": "arn:aws:iam::YOUR_ACCOUNT_ID_HERE:role/ecsTaskExecutionRole",
+  "executionRoleArn": "arn:aws:iam::752049529225:role/ecsTaskExecutionRole",
   "containerDefinitions": [
     {
-      "name": "workshop",
-      "image": "YOUR_ACCOUNT_ID_HERE.dkr.ecr.us-east-1.amazonaws.com/workshop",
+      "name": "prediction",
+      "image": "752049529225.dkr.ecr.ap-northeast-1.amazonaws.com/my-ecs-repo",
       "essential": true,
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-          "awslogs-group": "/ecs/workshop",
-          "awslogs-region": "us-east-1",
-          "awslogs-stream-prefix": "ecs"
-        }
-      },
       "portMappings": [
         {
           "protocol": "tcp",
-          "containerPort": 80
+          "containerPort": 8000,
+	  "hostPort": 8000
+
         }
       ]
     }
