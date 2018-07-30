@@ -16,13 +16,14 @@ ECR_URI="${Account_ID}.dkr.ecr.${AWS_Region}.amazonaws.com/${Repo_Name}"
 
 #Tag of Docker image
 Image_Tag="prediction"
-Image_Ver="latest"
 
 (
     echo "Check ECR Repo"
-    ecr_repo=$(aws --region ${AWS_Region} ecr describe-repositories --repository-names ${Repo_Name}) 
-    if echo ${ecr_repo} | grep  -q -E "RepositoryNotFoundException"
+    ecr_repo=$(aws --region ${AWS_Region} ecr describe-repositories) 
+    if echo ${ecr_repo} | grep  -q -E ${Repo_Name} 
     then 
+	echo "Repo of ${Repo_Name} is existed."
+    else
 	echo "Create docker image repo"
 	aws --region ${AWS_Region} ecr create-repository --repository-name ${Repo_Name}
     fi	
@@ -30,13 +31,13 @@ Image_Ver="latest"
 
 (
     #Build docker image
-    echo "build image of ${Image_Tag}:latest"
-    docker build -t "${Image_Tag}:${Image_Ver}" -f ./Dockerfile .
+    echo "build image of ${Image_Tag}"
+    docker build -t "${Image_Tag}" -f ./Dockerfile .
 
     #Tag the new docker image to the remote repo
     echo "tag the image"
-    #docker tag "${Image_Tag}:${Image_Ver}" "${ECR_URI}/${Image_Tag}:${Image_Ver}"
-    docker tag "${Image_Tag}:${Image_Ver}" "${ECR_URI}"
+    #docker tag "${Image_Tag}" "${ECR_URI}/${Image_Tag}:${Image_Ver}"
+    docker tag "${Image_Tag}" "${ECR_URI}:${Image_Tag}"
 
 )
 
@@ -53,7 +54,7 @@ Image_Ver="latest"
 
     # Push to the remote ECR repo (VERSION identifier)
     echo "push image to ecr"
-    docker push "${ECR_URI}"
+    docker push "${ECR_URI}:${Image_Tag}"
 )
 
 
